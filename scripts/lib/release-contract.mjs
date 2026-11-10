@@ -11,7 +11,7 @@ export const PROJECT = Object.freeze({
   orgId: "team_nyAa8oJCujnSymAWbsZ0xiDl",
   projectName: "time-overlay",
 });
-export const SCOPE = "sean-lius-projects-484b037e";
+export const SCOPE = "spongylabs";
 export const ORIGIN = "https://timeoverlay.co";
 export const DOMAINS = ["timeoverlay.co", "www.timeoverlay.co"];
 export const BUILD_MODE = "local-linux-amd64-prebuilt";

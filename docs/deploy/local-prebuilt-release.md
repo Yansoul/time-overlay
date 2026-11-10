@@ -18,7 +18,7 @@ Docker 内运行锁定依赖安装、lint、业务测试、发布测试和 `verc
 ## 前置条件
 
 - 本机 Node >=22、pnpm 9.15.9、已登录的 Vercel CLI、运行中的 Docker。
-- 能访问 `sean-lius-projects-484b037e/time-overlay`。项目 ID 和团队 ID 在
+- 能访问 `spongylabs/time-overlay`。项目 ID 和团队 ID 在
   `scripts/lib/release-contract.mjs` 固定；项目 Node 必须为 24.x。
 - Docker 下载依赖/Google 字体需要联网；本机代理不要指向容器内的 localhost。
 - 构建器为 Node 24 + pnpm 9.15.9 + Vercel CLI 53.2.0，强制 linux/amd64。
@@ -79,8 +79,8 @@ TIME_OVERLAY_BUILD_ENV_FILE="$HOME/.time-overlay-release-secrets/vercel-build.en
 从 `releases/` 找到上一条已验证记录，确认 deployment 属于本项目：
 
 ```sh
-vercel inspect <previous-deployment-url> --scope sean-lius-projects-484b037e
-vercel promote <previous-deployment-url> --scope sean-lius-projects-484b037e
+vercel inspect <previous-deployment-url> --scope spongylabs
+vercel promote <previous-deployment-url> --scope spongylabs
 ```
 
 重新验证 production target、timeoverlay.co/www.timeoverlay.co 和公开页面。

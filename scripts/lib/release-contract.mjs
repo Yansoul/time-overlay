@@ -165,7 +165,7 @@ export function prebuiltDeployArgs(identity) {
     "--meta", `releaseGitTree=${identity.tree}`];
 }
 
-const DEPLOYMENT_HOST = /^time-overlay-[a-z0-9]+-sean-lius-projects-[a-z0-9]+\.vercel\.app$/;
+const DEPLOYMENT_HOST = /^time-overlay-[a-z0-9]+-(?:sean-lius-projects-[a-z0-9]+|spongylabs)\.vercel\.app$/;
 
 /** Returns null when the CLI printed no deployment URL; callers fall back to the API. */
 export function parseDeploymentUrl(stdout) {

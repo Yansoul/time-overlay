@@ -121,6 +121,20 @@ describe("POST /api/pro/checkout", () => {
     assert.equal(params.cancel_url, ORIGIN + "/");
   });
 
+  it("carries only a validated anonymous visitor cookie into checkout metadata", async () => {
+    stripeMocks.create.mockResolvedValue({ id: "cs_unit_cookie", url: "https://checkout.stripe.com/c/pay/unit" });
+    for (const [cookie, expected] of [
+      ["other=ignored; _pv_id=visitor_12345678", "visitor_12345678"],
+      ["_pv_id=person@example.com", undefined],
+      ["_pv_id=short", undefined],
+    ]) {
+      const request = makeRequest({ trigger: "direct", locale: "en", returnPath: "/" });
+      request.headers.set("cookie", cookie!);
+      assert.equal((await POST(request)).status, 200);
+      assert.equal(stripeMocks.create.mock.calls.at(-1)?.[0].metadata.pvuv_visitor_id, expected);
+    }
+  });
+
   it("returns 400 without touching Stripe for invalid parameters", async () => {
     for (const body of [
       { trigger: "hacked", locale: "en", returnPath: "/" },

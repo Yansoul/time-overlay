@@ -257,6 +257,12 @@ function createCodedError(code: string, message: string) {
 }
 
 export function GeneratorShell({ hero, ui }: GeneratorShellProps) {
+  const editorViewedRef = useRef(false);
+  useEffect(() => {
+    if (editorViewedRef.current) return;
+    editorViewedRef.current = true;
+    trackEvent("editor_viewed", {});
+  }, []);
   const { status: proStatus } = usePro();
   const isPro = proStatus === "pro";
   const [paywallTrigger, setPaywallTrigger] = useState<ProTrigger | null>(

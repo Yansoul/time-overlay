@@ -5,6 +5,7 @@ import { verifyPriceQuote, type QuotePayload } from "@/lib/pro/pricing-quote";
 import { allowedOrigin, logPricingFailure, checkoutIdempotency, pricingResponse, regionalConfig, regionalEnabled,
   requestCountry, validateRegionalCatalog, validRegionalSession } from "@/lib/pro/pricing-server";
 import type Stripe from "stripe";
+import { pvuvVisitorId } from "@/lib/analytics/pvuv-server";
 
 const PRO_TRIGGERS: readonly ProTrigger[] = ["duration", "fps", "template", "resolution", "format", "direct"];
 export const runtime = "nodejs";
@@ -47,6 +48,7 @@ export async function POST(request: Request): Promise<Response> {
     return pricingResponse({ error: "quote_changed" }, 409);
   }
 
+  const visitorId = pvuvVisitorId(request);
   const safeReturnPath = sanitizeReturnPath(returnPath);
   const origin = new URL(request.url).origin;
   const params: Stripe.Checkout.SessionCreateParams = {
@@ -61,6 +63,7 @@ export async function POST(request: Request): Promise<Response> {
     ...(couponId ? { discounts: [{ coupon: couponId }] } : { allow_promotion_codes: true }),
     metadata: {
       product: PRO_PRODUCT, trigger, locale,
+      ...(visitorId ? { pvuv_visitor_id: visitorId } : {}),
       ...(quote ? {
         pricing_policy: quote.policyVersion, pricing_country: quote.country ?? "unknown",
         pricing_tier: quote.tier, pricing_quote_id: quote.quoteId,
@@ -74,7 +77,7 @@ export async function POST(request: Request): Promise<Response> {
   };
   try {
     const session = await config.stripe.checkout.sessions.create(params, quote ? {
-      idempotencyKey: checkoutIdempotency(quote, origin, safeReturnPath, trigger, locale),
+      idempotencyKey: checkoutIdempotency(quote, origin, safeReturnPath, trigger, locale) + (visitorId ? `-${visitorId}` : ""),
     } : undefined);
     if (quote && (!validRegionalSession(session, quote) || session.status !== "open")) {
       if (session.status === "open" && session.payment_status === "unpaid") {

@@ -39,7 +39,7 @@ const shellGlowClasses = [
   "absolute bottom-[-8rem] left-1/2 h-[20rem] w-[28rem] -translate-x-1/2 rounded-full bg-secondary/8 blur-3xl",
 ] as const;
 const ahrefsAnalyticsDataKey = "NQce666pfXHzSj3WBXaUIQ";
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === "production" && process.env.VERCEL_ENV === "production";
 const googleAnalyticsId = "G-1FB0KM19XV";
 const googleAnalyticsBootstrapScript = `
   window.dataLayer = window.dataLayer || [];
@@ -197,6 +197,8 @@ export function AppDocument({
             src="https://www.pvuv.ai/f.js"
             data-site="GeFEMJ3Y"
             data-api="https://in.pvuv.ai"
+            data-exclude="/live,/live/*"
+            data-downloads="off"
           />
         ) : null}
       </head>

@@ -1,4 +1,5 @@
 import posthog from "posthog-js";
+import { trackPvuvEvent } from "./pvuv-client";
 
 type GtagFn = (...args: unknown[]) => void;
 
@@ -15,6 +16,7 @@ export type AnalyticsEventPayload = Record<
 >;
 
 export type AnalyticsEventName =
+  | "editor_viewed"
   | "export_started"
   | "export_generated"
   | "export_download_requested"
@@ -57,6 +59,8 @@ export function trackEvent(
   if (typeof window === "undefined") {
     return;
   }
+
+  trackPvuvEvent(event, payload);
 
   // PostHog (initialised in instrumentation-client.ts before hydration).
   // Forwarding the funnel events here lets us analyse them alongside

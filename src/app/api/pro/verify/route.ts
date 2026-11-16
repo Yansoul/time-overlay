@@ -4,6 +4,7 @@ import {
 } from "@/lib/pro/config";
 import { signProToken } from "@/lib/pro/token";
 import { verifiedPricing } from "@/lib/pro/regional-pricing";
+import { reportProPurchase } from "@/lib/analytics/pvuv-server";
 
 function notConfigured(): Response {
   return Response.json({ error: "not_configured" }, { status: 503 });
@@ -46,6 +47,9 @@ export async function GET(request: Request): Promise<Response> {
   if (session.payment_status !== "paid") {
     return Response.json({ error: "unpaid" }, { status: 402 });
   }
+
+  // Same dedup key as the webhook; analytics failure never blocks the license.
+  await reportProPurchase(session);
 
   const email = session.customer_details?.email ?? null;
   if (!email) {
